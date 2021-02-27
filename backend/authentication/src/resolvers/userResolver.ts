@@ -7,7 +7,7 @@ export class UserResolver {
   user() {
     const user = new User();
     user.email = "Test Email";
-    user.id = 123;
+    user.id = 123;  
     user.password = "Password";
     user.userName = "Username";
     return user;
