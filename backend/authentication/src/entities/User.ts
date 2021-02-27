@@ -1,3 +1,4 @@
+
 import { Field, Int, ObjectType } from "type-graphql";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
@@ -21,8 +22,5 @@ export class User {
   @Field(() => String)
   email: string;
 
-  @Column({type: 'text'})
-  @Field(() => String)
-  cookie: string;
 
 }

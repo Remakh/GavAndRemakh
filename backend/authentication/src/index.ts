@@ -4,20 +4,12 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./resolvers/userResolver";
 import { createConnection } from "typeorm";
-import { User } from "./entities/User";
-
+// import { User } from "./entities/User";
 const main = async () => {
   const app = express();
-  await createConnection({
-    type: "postgres",
-    host: "localhost",
-    username: "remakh",
-    password: "password",
-    database: "gavbase",
-    synchronize: true,
-    logging: true,
-    entities: [User],
-  });
+  createConnection()
+  .then()
+  .catch(err => console.log(err));
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
