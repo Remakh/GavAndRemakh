@@ -2,9 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import Register from "./Register";
+import Register from "./register";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import NavbarLayout from "./components/navbarLayout";
 
 const client = new ApolloClient({
   uri: "http://localhost:8888/graphql",
@@ -15,7 +17,17 @@ ReactDOM.render(
   <ApolloProvider client={client}>
     <ChakraProvider>
       <React.StrictMode>
-        <Register />
+        <Router>
+          <Switch>
+            <Route exact path="/">
+              <NavbarLayout children={null} />
+            </Route>
+
+            <Route exact path="/register">
+              <Register />
+            </Route>
+          </Switch>
+        </Router>
       </React.StrictMode>
     </ChakraProvider>
   </ApolloProvider>,
