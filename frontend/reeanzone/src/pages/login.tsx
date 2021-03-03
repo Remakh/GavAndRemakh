@@ -1,13 +1,13 @@
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React from "react";
-import NavbarLayout from "./components/navbarLayout";
+import NavbarLayout from "../components/navbarLayout";
 import {
   RegisterMutationVariables,
   useRegisterMutation,
-} from "./generated/graphql";
+} from "../generated/graphql";
 
-const Register = () => {
+const Login = () => {
   const [register] = useRegisterMutation();
   return (
     <NavbarLayout>
@@ -30,11 +30,6 @@ const Register = () => {
               </FormControl>
 
               <FormControl>
-                <FormLabel htmlFor="email">Email</FormLabel>
-                <Input {...formik.getFieldProps("email")} placeholder="email" />
-              </FormControl>
-
-              <FormControl>
                 <FormLabel htmlFor="password">Password</FormLabel>
                 <Input
                   {...formik.getFieldProps("password")}
@@ -43,7 +38,7 @@ const Register = () => {
                 />
               </FormControl>
 
-              <Button type="submit">Register</Button>
+              <Button type="submit">Login</Button>
             </Form>
           )}
         </Formik>
@@ -52,4 +47,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;
