@@ -1,7 +1,17 @@
-import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Field,
+  InputType,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { getRepository } from "typeorm";
 import * as argon2 from "argon2";
 import { User } from "../entities/User";
+import { ContextType } from "src/types";
 
 @InputType()
 class RegisterUserInput {
@@ -27,7 +37,9 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  async register(@Arg("userData") newUserData: RegisterUserInput): Promise<User>{
+  async register(
+    @Arg("userData") newUserData: RegisterUserInput
+  ): Promise<User> {
     const userRepository = getRepository(User);
     const user = userRepository.create();
     user.userName = newUserData.username;
@@ -36,5 +48,16 @@ export class UserResolver {
     await userRepository.save(user);
     return user;
   }
-}
 
+  @Query(() => Int)
+  tquery(@Ctx() { req }: ContextType) {
+    if (!req.session.test) {
+      req.session.test = 1;
+      console.log("No test");
+    } else {
+      req.session.test += 1;
+    }
+
+    return req.session.test;
+  }
+}

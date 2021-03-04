@@ -10,26 +10,42 @@ import ConnectPg from "connect-pg-simple";
 import { COOKIE_NAME } from "./consts/consts";
 
 const main = async () => {
+  await createConnection();
+
   const app = express();
+
+  const postgresqlConnection = {
+    host: "localhost",
+    port: 5432,
+    user: "remakh",
+    password: "password",
+    database: "gavbase",
+  };
 
   app.use(
     session({
-      store: new (ConnectPg(session))(),
-      secret: "secret",
+      store: new (ConnectPg(session))({
+        conObject: postgresqlConnection,
+      }),
+      name: COOKIE_NAME,
+      secret: "reean and gav secret",
       resave: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
         httpOnly: true,
+        secure: false,
+        sameSite: "lax",
       },
+      saveUninitialized: false,
     })
   );
-  await createConnection();
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [UserResolver],
       validate: false,
     }),
+    context: ({ req, res }) => ({ req, res }),
   });
 
   apolloServer.applyMiddleware({ app });
