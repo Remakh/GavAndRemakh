@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { Request, Response } from "express";
 import { SessionData } from "express-session";
 import { Session } from "inspector";
 
