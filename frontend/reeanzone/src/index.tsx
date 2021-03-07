@@ -12,6 +12,7 @@ import Register from "./pages/register";
 const client = new ApolloClient({
   uri: "http://localhost:8888/graphql",
   cache: new InMemoryCache(),
+  credentials: "include",
 });
 
 ReactDOM.render(

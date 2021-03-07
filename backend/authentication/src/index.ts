@@ -8,11 +8,17 @@ import { createConnection } from "typeorm";
 import session from "express-session";
 import ConnectPg from "connect-pg-simple";
 import { COOKIE_NAME } from "./consts/consts";
+import cors from "cors";
 
 const main = async () => {
   await createConnection();
 
   const app = express();
+
+  const corsOptions = {
+    origin: "http://localhost:3000",
+    credentials: true,
+  };
 
   const postgresqlConnection = {
     host: "localhost",
@@ -21,6 +27,8 @@ const main = async () => {
     password: "password",
     database: "gavbase",
   };
+
+  app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
   app.use(
     session({
@@ -48,7 +56,7 @@ const main = async () => {
     context: ({ req, res }) => ({ req, res }),
   });
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app, cors: corsOptions });
 
   app.listen(8888);
 };

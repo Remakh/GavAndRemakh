@@ -1,22 +1,31 @@
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { Form, Formik } from "formik";
+import { ErrorMessage, Form, Formik } from "formik";
 import React from "react";
+import { useHistory } from "react-router-dom";
 import NavbarLayout from "../components/navbarLayout";
-import {
-  RegisterMutationVariables,
-  useRegisterMutation,
-} from "../generated/graphql";
+import { useLoginMutation } from "../generated/graphql";
 
 const Login = () => {
-  const [register] = useRegisterMutation();
+  const [login, { loading }] = useLoginMutation();
+  const history = useHistory();
   return (
     <NavbarLayout>
       <Box width={800} mx="auto">
         <Formik
-          initialValues={{ username: "", password: "", email: "" }}
-          onSubmit={(values) => {
-            console.log(values);
-            register({ variables: { ...values } });
+          initialValues={{ username: "", password: "" }}
+          onSubmit={async (values, { setErrors }) => {
+            const response = await login({ variables: { ...values } });
+
+            if (!response.data?.login.success) {
+              let message = "";
+              if (response.data?.login.message) {
+                message = response.data?.login.message;
+              }
+              setErrors({ password: message });
+              return;
+            }
+
+            history.push("/");
           }}
         >
           {(formik) => (
@@ -27,6 +36,11 @@ const Login = () => {
                   {...formik.getFieldProps("username")}
                   placeholder="Username"
                 />
+                <ErrorMessage name="username">
+                  {(errorMessage) => (
+                    <div style={{ color: "red" }}>{errorMessage}</div>
+                  )}
+                </ErrorMessage>
               </FormControl>
 
               <FormControl>
@@ -36,9 +50,16 @@ const Login = () => {
                   placeholder="Password"
                   type="password"
                 />
+                <ErrorMessage name="password">
+                  {(errorMessage) => (
+                    <div style={{ color: "red" }}>{errorMessage}</div>
+                  )}
+                </ErrorMessage>
               </FormControl>
 
-              <Button type="submit">Login</Button>
+              <Button mt={2} type="submit" isLoading={loading}>
+                Login
+              </Button>
             </Form>
           )}
         </Formik>
