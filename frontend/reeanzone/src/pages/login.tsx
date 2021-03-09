@@ -1,6 +1,6 @@
+import { useApolloClient } from "@apollo/client";
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { ErrorMessage, Form, Formik } from "formik";
-import React from "react";
 import { useHistory } from "react-router-dom";
 import NavbarLayout from "../components/navbarLayout";
 import { useLoginMutation } from "../generated/graphql";
@@ -8,6 +8,8 @@ import { useLoginMutation } from "../generated/graphql";
 const Login = () => {
   const [login, { loading }] = useLoginMutation();
   const history = useHistory();
+  const apolloClient = useApolloClient();
+
   return (
     <NavbarLayout>
       <Box width={800} mx="auto">
@@ -24,7 +26,7 @@ const Login = () => {
               setErrors({ password: message });
               return;
             }
-
+            apolloClient.resetStore();
             history.push("/");
           }}
         >

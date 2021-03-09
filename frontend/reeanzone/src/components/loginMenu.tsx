@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Icon,
@@ -7,14 +8,14 @@ import {
   MenuItem,
   MenuList,
 } from "@chakra-ui/react";
-import React from "react";
 import { CgProfile } from "react-icons/cg";
 import { Link as RouterLink } from "react-router-dom";
-import { useCurrentUserQuery, useLoginMutation } from "../generated/graphql";
+import { useCurrentUserQuery, useLogoutMutation } from "../generated/graphql";
 
 const LoginMenu = () => {
   const { loading, data } = useCurrentUserQuery();
-  const [logout] = useLoginMutation();
+  const [logout] = useLogoutMutation();
+  const apolloClient = useApolloClient();
 
   if (loading) {
     return (
@@ -29,7 +30,6 @@ const LoginMenu = () => {
       </Menu>
     );
   }
-  console.log(data);
   //Not logged in
   if (!data?.currentUser.success || !data.currentUser.user) {
     return (
@@ -67,6 +67,7 @@ const LoginMenu = () => {
         <MenuItem
           onClick={async () => {
             await logout();
+            await apolloClient.resetStore();
           }}
         >
           Logout
