@@ -43,7 +43,9 @@ const Register = () => {
                 />
               </FormControl>
 
-              <Button type="submit">Register</Button>
+              <Button mt={2} type="submit">
+                Register
+              </Button>
             </Form>
           )}
         </Formik>
