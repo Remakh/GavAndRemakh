@@ -30,8 +30,9 @@ const LoginMenu = () => {
       </Menu>
     );
   }
+
   //Not logged in
-  if (!data?.currentUser.success || !data.currentUser.user) {
+  if (!data || data?.currentUser.errors || !data.currentUser.user) {
     return (
       <Menu>
         <MenuButton

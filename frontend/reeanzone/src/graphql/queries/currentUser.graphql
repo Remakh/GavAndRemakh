@@ -5,7 +5,9 @@ query CurrentUser{
       userName
       email
     }
-    success
-    message
+    errors {
+      type
+      message
+    }
   }
 }

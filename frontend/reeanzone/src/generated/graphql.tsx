@@ -22,8 +22,7 @@ export type Query = {
 export type UserResponse = {
   __typename?: 'UserResponse';
   user?: Maybe<User>;
-  success: Scalars['Boolean'];
-  message?: Maybe<Scalars['String']>;
+  errors?: Maybe<Array<UserErrors>>;
 };
 
 export type User = {
@@ -33,10 +32,16 @@ export type User = {
   email: Scalars['String'];
 };
 
+export type UserErrors = {
+  __typename?: 'UserErrors';
+  type: Scalars['String'];
+  message: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   login: UserResponse;
-  register: User;
+  register: UserResponse;
   logout: Scalars['Boolean'];
 };
 
@@ -71,11 +76,13 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
     { __typename?: 'UserResponse' }
-    & Pick<UserResponse, 'success' | 'message'>
     & { user?: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id' | 'userName' | 'email'>
-    )> }
+    )>, errors?: Maybe<Array<(
+      { __typename?: 'UserErrors' }
+      & Pick<UserErrors, 'type' | 'message'>
+    )>> }
   ) }
 );
 
@@ -97,8 +104,14 @@ export type RegisterMutationVariables = Exact<{
 export type RegisterMutation = (
   { __typename?: 'Mutation' }
   & { register: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'userName' | 'email'>
+    { __typename?: 'UserResponse' }
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'userName' | 'email'>
+    )>, errors?: Maybe<Array<(
+      { __typename?: 'UserErrors' }
+      & Pick<UserErrors, 'type' | 'message'>
+    )>> }
   ) }
 );
 
@@ -109,11 +122,13 @@ export type CurrentUserQuery = (
   { __typename?: 'Query' }
   & { currentUser: (
     { __typename?: 'UserResponse' }
-    & Pick<UserResponse, 'success' | 'message'>
     & { user?: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id' | 'userName' | 'email'>
-    )> }
+    )>, errors?: Maybe<Array<(
+      { __typename?: 'UserErrors' }
+      & Pick<UserErrors, 'type' | 'message'>
+    )>> }
   ) }
 );
 
@@ -121,13 +136,15 @@ export type CurrentUserQuery = (
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(userData: {username: $username, password: $password}) {
-    success
     user {
       id
       userName
       email
     }
-    message
+    errors {
+      type
+      message
+    }
   }
 }
     `;
@@ -189,9 +206,15 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const RegisterDocument = gql`
     mutation Register($username: String!, $password: String!, $email: String!) {
   register(userData: {username: $username, password: $password, email: $email}) {
-    id
-    userName
-    email
+    user {
+      id
+      userName
+      email
+    }
+    errors {
+      type
+      message
+    }
   }
 }
     `;
@@ -230,8 +253,10 @@ export const CurrentUserDocument = gql`
       userName
       email
     }
-    success
-    message
+    errors {
+      type
+      message
+    }
   }
 }
     `;

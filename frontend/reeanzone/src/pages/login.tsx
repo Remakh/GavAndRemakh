@@ -2,8 +2,10 @@ import { useApolloClient } from "@apollo/client";
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { ErrorMessage, Form, Formik } from "formik";
 import { useHistory } from "react-router-dom";
+import { FormikError } from "../components/formikError";
 import NavbarLayout from "../components/navbarLayout";
 import { useLoginMutation } from "../generated/graphql";
+import { convertApiErrorToFormik } from "../util/apiErrorToFormik";
 
 const Login = () => {
   const [login, { loading }] = useLoginMutation();
@@ -18,12 +20,11 @@ const Login = () => {
           onSubmit={async (values, { setErrors }) => {
             const response = await login({ variables: { ...values } });
 
-            if (!response.data?.login.success) {
-              let message = "";
-              if (response.data?.login.message) {
-                message = response.data?.login.message;
-              }
-              setErrors({ password: message });
+            if (response.data?.login.errors) {
+              const errorMap = convertApiErrorToFormik(
+                response.data.login.errors
+              );
+              setErrors(errorMap);
               return;
             }
             apolloClient.resetStore();
@@ -38,11 +39,7 @@ const Login = () => {
                   {...formik.getFieldProps("username")}
                   placeholder="Username"
                 />
-                <ErrorMessage name="username">
-                  {(errorMessage) => (
-                    <div style={{ color: "red" }}>{errorMessage}</div>
-                  )}
-                </ErrorMessage>
+                <FormikError type="username" />
               </FormControl>
 
               <FormControl>
@@ -52,11 +49,7 @@ const Login = () => {
                   placeholder="Password"
                   type="password"
                 />
-                <ErrorMessage name="password">
-                  {(errorMessage) => (
-                    <div style={{ color: "red" }}>{errorMessage}</div>
-                  )}
-                </ErrorMessage>
+                <FormikError type="password" />
               </FormControl>
 
               <Button mt={2} type="submit" isLoading={loading}>

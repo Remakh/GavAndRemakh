@@ -37,15 +37,21 @@ class LoginUserInput {
 }
 
 @ObjectType()
+class UserErrors {
+  @Field(() => String)
+  type: string;
+
+  @Field(() => String)
+  message?: string;
+}
+
+@ObjectType()
 class UserResponse {
   @Field(() => User, { nullable: true })
   user?: User;
 
-  @Field(() => Boolean)
-  success: boolean;
-
-  @Field(() => String, { nullable: true })
-  message?: string;
+  @Field(() => [UserErrors], { nullable: true })
+  errors?: UserErrors[];
 }
 
 @Resolver()
@@ -53,14 +59,14 @@ export class UserResolver {
   @Query(() => UserResponse)
   async currentUser(@Ctx() { req }: ContextType): Promise<UserResponse> {
     if (!req.session.userId) {
-      return { success: false, message: "Not login in" };
+      return { errors: [{ type: "user", message: "User not logged in" }] };
     }
     const user = await getRepository(User)
       .createQueryBuilder("user")
       .where("user.id = :id", { id: req.session.userId })
       .getOne();
 
-    return { success: true, user };
+    return { user };
   }
 
   @Mutation(() => UserResponse)
@@ -75,35 +81,80 @@ export class UserResolver {
 
     if (!user) {
       return {
-        success: false,
-        message: "User not registered",
+        errors: [
+          { type: "password", message: "Username or password is incorrect" },
+        ],
       };
     }
     const validUser = await argon2.verify(user.password, userData.password);
 
     if (!validUser) {
       return {
-        success: false,
-        message: "Username or password is incorrect",
+        errors: [
+          { type: "password", message: "Username or password is incorrect" },
+        ],
       };
     }
 
     req.session.userId = user.id;
 
-    return { user, success: true };
+    return { user };
   }
 
-  @Mutation(() => User)
+  @Mutation(() => UserResponse)
   async register(
     @Arg("userData") newUserData: RegisterUserInput
-  ): Promise<User> {
+  ): Promise<UserResponse> {
     const userRepository = getRepository(User);
+
+    //Username checks
+    let existingUser = await userRepository.findOne({
+      where: { userName: newUserData.username },
+    });
+
+    if (existingUser) {
+      return { errors: [{ type: "username", message: "Username taken" }] };
+    }
+
+    //Email checks
+
+    if (!newUserData.email.includes("@")) {
+      return { errors: [{ type: "email", message: "Invalid email" }] };
+    }
+
+    existingUser = await userRepository.findOne({
+      where: { email: newUserData.email },
+    });
+
+    if (existingUser) {
+      return {
+        errors: [
+          {
+            type: "email",
+            message: "An account has already been made using this email",
+          },
+        ],
+      };
+    }
+
+    //Password checks
+    if (newUserData.password.length < 3) {
+      return {
+        errors: [
+          {
+            type: "password",
+            message: "Password must be at least 3 characters long",
+          },
+        ],
+      };
+    }
+
     const user = userRepository.create();
     user.userName = newUserData.username;
     user.email = newUserData.email;
     user.password = await argon2.hash(newUserData.password);
     await userRepository.save(user);
-    return user;
+    return { user };
   }
 
   @Mutation(() => Boolean)
