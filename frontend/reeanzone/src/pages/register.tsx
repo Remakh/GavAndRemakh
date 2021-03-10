@@ -1,22 +1,33 @@
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import React from "react";
+import { useHistory } from "react-router-dom";
+import { FormikError } from "../components/formikError";
 import NavbarLayout from "../components/navbarLayout";
-import {
-  RegisterMutationVariables,
-  useRegisterMutation,
-} from "../generated/graphql";
+import { useRegisterMutation } from "../generated/graphql";
+import { convertApiErrorToFormik } from "../util/apiErrorToFormik";
 
 const Register = () => {
-  const [register] = useRegisterMutation();
+  const [register, { loading }] = useRegisterMutation();
+  const history = useHistory();
+
   return (
     <NavbarLayout>
       <Box width={800} mx="auto">
         <Formik
           initialValues={{ username: "", password: "", email: "" }}
-          onSubmit={(values) => {
+          onSubmit={async (values, { setErrors }) => {
             console.log(values);
-            register({ variables: { ...values } });
+            const response = await register({ variables: { ...values } });
+
+            if (response.data?.register.errors) {
+              const errors = convertApiErrorToFormik(
+                response.data.register.errors
+              );
+              setErrors(errors);
+              return;
+            }
+
+            history.push("/login");
           }}
         >
           {(formik) => (
@@ -27,11 +38,13 @@ const Register = () => {
                   {...formik.getFieldProps("username")}
                   placeholder="Username"
                 />
+                <FormikError type="username" />
               </FormControl>
 
               <FormControl>
                 <FormLabel htmlFor="email">Email</FormLabel>
                 <Input {...formik.getFieldProps("email")} placeholder="email" />
+                <FormikError type="email" />
               </FormControl>
 
               <FormControl>
@@ -41,9 +54,10 @@ const Register = () => {
                   placeholder="Password"
                   type="password"
                 />
+                <FormikError type="password" />
               </FormControl>
 
-              <Button mt={2} type="submit">
+              <Button isLoading={loading} mt={2} type="submit">
                 Register
               </Button>
             </Form>
