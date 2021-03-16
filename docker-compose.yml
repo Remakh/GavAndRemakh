@@ -1,0 +1,23 @@
+version: "3.1"
+
+services: 
+  gavbase:
+    container_name: "gavbase"
+    image: "gavbase"
+    build: "./database"
+    environment: 
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_USER: "remakh"
+      POSTGRES_DB: "gavbase"
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    container_name: "gavbase_admin"
+    image: "dpage/pgadmin4"
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: "root"
+      PGADMIN_DEFAULT_EMAIL: "gavbase@gavbase.com"
