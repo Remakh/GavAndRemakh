@@ -21,3 +21,6 @@ services:
     environment:
       PGADMIN_DEFAULT_PASSWORD: "root"
       PGADMIN_DEFAULT_EMAIL: "gavbase@gavbase.com"
+
+volumes:
+  gavbase:
