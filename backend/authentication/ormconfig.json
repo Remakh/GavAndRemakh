@@ -5,7 +5,7 @@
    "username": "remakh",
    "password": "password",
    "database": "gavbase",
-   "synchronize": true,
+   "synchronize": false,
    "logging": false,
    "entities": [
       "dist/entities/**/*.js"

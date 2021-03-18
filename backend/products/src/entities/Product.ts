@@ -15,15 +15,15 @@ export class Product extends BaseEntity {
   @Field(() => Int)
   id: number;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: false })
   @Field(() => String)
   name: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: false })
   @Field(() => String)
   description: string;
 
-  @Column({ type: "decimal" })
+  @Column({ type: "decimal", nullable: false })
   price: number;
 
   @Field(() => String)
