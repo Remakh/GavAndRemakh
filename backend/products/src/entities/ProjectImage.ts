@@ -4,32 +4,29 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { ProductImages } from "./ProjectImage";
+import { Product } from "./Product";
 
 @Entity()
 @ObjectType()
-export class Product extends BaseEntity {
+export class ProductImages extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number;
 
-  @Column({ type: "text", nullable: false })
-  @Field(() => String)
-  name: string;
-
-  @Column({ type: "text", nullable: false })
+  @Column({ type: "text", nullable: true })
   @Field(() => String)
   description: string;
 
-  @Column({ type: "decimal", nullable: false })
-  price: number;
+  @Column({ type: "text", nullable: false })
+  @Field(() => String)
+  url: string;
 
-  @OneToMany(() => ProductImages, (image) => image.product)
-  images: ProductImages;
+  @ManyToOne(() => Product, (product) => product.images)
+  product: Product;
 
   @Field(() => String)
   @CreateDateColumn()
