@@ -2,13 +2,16 @@ import { Product } from "../entities/Product";
 import {
   Arg,
   Field,
+  FieldResolver,
   Float,
   InputType,
   Mutation,
   ObjectType,
   Query,
   Resolver,
+  Root,
 } from "type-graphql";
+import { ProductImages } from "../entities/ProjectImage";
 
 @InputType()
 class NewProduct {
@@ -40,11 +43,25 @@ class ProductResponse {
   errors?: ProductErrors[];
 }
 
-@Resolver()
+@Resolver(() => Product)
 export class ProductResolver {
-  @Query(() => String)
-  async currentUser(): Promise<string> {
-    return "history";
+  @FieldResolver(() => [ProductImages])
+  async images(@Root() product: Product) {
+    const images = await ProductImages.find({ where: { product: product } });
+    return images;
+  }
+
+  @Query(() => Product)
+  async product(
+    @Arg("productId", { nullable: false }) productId: number
+  ): Promise<Product | null> {
+    const product = await Product.findOne(productId);
+
+    if (!product) {
+      return null;
+    }
+
+    return product;
   }
 
   @Mutation(() => ProductResponse)
