@@ -19,7 +19,7 @@
       "migrate": "typeorm migration:generate",
       "dev2": "tsc -w & nodemon dist/index.js",
       "runMigrate": "ts-node ./node_modules/typeorm/cli.js migration:run",
-      "revertMigrate": "ts-node ./node_modules/typeorm/cli.js migration:revert",
+      "revertMigrate": "ts-node ./node_modules/typeorm/cli.js migration:revert"
    },
    "dependencies": {
       "apollo-server-express": "^2.21.0",

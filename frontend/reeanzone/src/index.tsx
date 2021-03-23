@@ -8,9 +8,18 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import NavbarLayout from "./components/navbarLayout";
 import Login from "./pages/login";
 import Register from "./pages/register";
+import ProductImageCarousel from "./components/productImageCarousel";
+import { RestLink } from "apollo-link-rest";
 
-const client = new ApolloClient({
+const urls = new RestLink({
   uri: "http://localhost:8888/graphql",
+  endpoints: {
+    user: "http://localhost:8888/graphql",
+    product: "http://localhost:8887/graphql",
+  },
+});
+const client = new ApolloClient({
+  uri: "http://localhost:8887/graphql",
   cache: new InMemoryCache(),
   credentials: "include",
 });
@@ -30,6 +39,9 @@ ReactDOM.render(
             </Route>
             <Route path="/login">
               <Login />
+            </Route>
+            <Route path="/test">
+              <ProductImageCarousel />
             </Route>
           </Switch>
         </Router>

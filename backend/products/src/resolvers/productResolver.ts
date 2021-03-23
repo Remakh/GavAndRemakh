@@ -5,6 +5,7 @@ import {
   FieldResolver,
   Float,
   InputType,
+  Int,
   Mutation,
   ObjectType,
   Query,
@@ -53,7 +54,7 @@ export class ProductResolver {
 
   @Query(() => Product)
   async product(
-    @Arg("productId", { nullable: false }) productId: number
+    @Arg("productId", () => Int, { nullable: false }) productId: number
   ): Promise<Product | null> {
     const product = await Product.findOne(productId);
 
