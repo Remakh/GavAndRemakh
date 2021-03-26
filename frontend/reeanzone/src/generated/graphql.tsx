@@ -193,7 +193,7 @@ export type ProductQuery = (
     & Pick<Product, 'id' | 'name' | 'description'>
     & { images: Array<(
       { __typename?: 'ProductImages' }
-      & Pick<ProductImages, 'url' | 'description' | 'id'>
+      & Pick<ProductImages, 'url' | 'description' | 'id' | 'dateAdded' | 'dateModified'>
     )> }
   ) }
 );
@@ -361,6 +361,8 @@ export const ProductDocument = gql`
       url
       description
       id
+      dateAdded
+      dateModified
     }
   }
 }

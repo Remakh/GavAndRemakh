@@ -6,7 +6,9 @@ query Product ($productId: Int!){
     images {
       url
       description
-      id
+      id      
+      dateAdded
+      dateModified
     }
   }
 }
