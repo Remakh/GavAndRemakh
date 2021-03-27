@@ -3,6 +3,8 @@ import {
   ButtonNext,
   CarouselContext,
   CarouselProvider,
+  DotGroup,
+  ImageWithZoom,
   Slide,
   Slider,
   WithStore,
@@ -33,8 +35,8 @@ const MainCarouselImage: React.FC<ImageCarouselProps> = ({ images }) => {
   if (images.length >= 1) {
     return (
       <Img
-        w={150}
-        h={250}
+        w="100%"
+        h="70%"
         objectFit="cover"
         src={images[currentSlide].url}
         alt={images[currentSlide].description}
@@ -44,43 +46,59 @@ const MainCarouselImage: React.FC<ImageCarouselProps> = ({ images }) => {
   return <div>Hello World</div>;
 };
 
-const ProductImageCarousel = () => {
-  const { data, loading } = useProductQuery({ variables: { productId: 2 } });
-  console.log(data);
-
-  if (data) {
-    const imageTest = data.product.images.map((image, index) => {
-      return (
-        <Slide index={index}>
-          <Img
-            w={150}
-            h={250}
-            objectFit="cover"
-            src={image.url}
-            alt={image.description}
-            key={image.id}
-          />
-        </Slide>
-      );
-    });
+const ProductImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
+  const imageTest = images.map((image, index) => {
     return (
-      <Box w={200} h={200}>
-        <CarouselProvider
-          naturalSlideWidth={100}
-          naturalSlideHeight={125}
-          totalSlides={imageTest.length}
-          visibleSlides={1}
-          infinite={true}
-        >
-          <MainCarouselImage images={data.product.images} />
-          <Slider>{imageTest}</Slider>
-          <ButtonBack>Back</ButtonBack>
-          <ButtonNext>Next</ButtonNext>
-        </CarouselProvider>
-      </Box>
+      <Slide index={index}>
+        <Img
+          w="100%"
+          h="100%"
+          objectFit="contain"
+          src={image.url}
+          alt={image.description}
+        />
+      </Slide>
     );
-  }
-  return <div>Hello World</div>;
+  });
+  return (
+    <Box>
+      <CarouselProvider
+        naturalSlideWidth={1}
+        naturalSlideHeight={1}
+        totalSlides={imageTest.length}
+        visibleSlides={1}
+        infinite={true}
+      >
+        {/* <MainCarouselImage images={images} /> */}
+        <Slider>{imageTest}</Slider>
+        <ButtonBack>Back</ButtonBack>
+        <ButtonNext>Next</ButtonNext>
+        <DotGroup
+          renderDots={({ totalSlides, currentSlide }) => {
+            const dots = [];
+
+            if (totalSlides) {
+              for (let i = 0; i < totalSlides; i += 1) {
+                dots.push(
+                  <Box h="25%" w="25%" display="inline-flex">
+                    <Img
+                      w="100%"
+                      h="100%"
+                      objectFit="cover"
+                      src={images[i].url}
+                      alt={images[i].description}
+                      border={i === currentSlide ? "5px solid #555" : ""}
+                    />
+                  </Box>
+                );
+              }
+            }
+            return dots;
+          }}
+        />
+      </CarouselProvider>
+    </Box>
+  );
 };
 
 export default ProductImageCarousel;

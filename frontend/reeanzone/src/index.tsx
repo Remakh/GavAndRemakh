@@ -10,6 +10,7 @@ import Login from "./pages/login";
 import Register from "./pages/register";
 import ProductImageCarousel from "./components/productImageCarousel";
 import { RestLink } from "apollo-link-rest";
+import Product from "./pages/product";
 
 const urls = new RestLink({
   uri: "http://localhost:8888/graphql",
@@ -41,7 +42,7 @@ ReactDOM.render(
               <Login />
             </Route>
             <Route path="/test">
-              <ProductImageCarousel />
+              <Product />
             </Route>
           </Switch>
         </Router>
