@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import React from "react";
+import TestProductImageCarousel from "../components/productCarousel";
 import ProductImageCarousel from "../components/productImageCarousel";
 import { useProductQuery } from "../generated/graphql";
 const Product = () => {
@@ -9,9 +10,9 @@ const Product = () => {
   if (data) {
     return (
       <Box w={400} height={400}>
-        <ProductImageCarousel
+        <TestProductImageCarousel
           images={data.product.images}
-        ></ProductImageCarousel>
+        ></TestProductImageCarousel>
       </Box>
     );
   }

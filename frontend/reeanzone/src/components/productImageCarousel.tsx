@@ -61,30 +61,27 @@ const ProductImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
     );
   });
   return (
-    <Box>
+    <Box h="100%" w="100%">
       <CarouselProvider
-        naturalSlideWidth={1}
-        naturalSlideHeight={1}
+        naturalSlideWidth={100}
+        naturalSlideHeight={70}
         totalSlides={imageTest.length}
         visibleSlides={1}
         infinite={true}
       >
         {/* <MainCarouselImage images={images} /> */}
         <Slider>{imageTest}</Slider>
-        <ButtonBack>Back</ButtonBack>
-        <ButtonNext>Next</ButtonNext>
         <DotGroup
+          style={{ height: "30%", width: "100%" }}
           renderDots={({ totalSlides, currentSlide }) => {
             const dots = [];
 
             if (totalSlides) {
               for (let i = 0; i < totalSlides; i += 1) {
                 dots.push(
-                  <Box h="25%" w="25%" display="inline-flex">
+                  <Box w="33%" display="inline-flex">
                     <Img
-                      w="100%"
-                      h="100%"
-                      objectFit="cover"
+                      objectFit="contain"
                       src={images[i].url}
                       alt={images[i].description}
                       border={i === currentSlide ? "5px solid #555" : ""}
@@ -96,6 +93,8 @@ const ProductImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
             return dots;
           }}
         />
+        <ButtonBack>Back</ButtonBack>
+        <ButtonNext>Next</ButtonNext>
       </CarouselProvider>
     </Box>
   );
